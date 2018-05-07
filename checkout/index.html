@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie-edge">
+        <title>FORM</title>
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    
+    <body>
+        <div class="wrapper">
+              <div class="alert">
+                      payment has been made
+            </div>
+    <div class="container">
+        <article class="part card-details">
+            <h1>
+                Payment Details
+            </h1>
+           
+            <form id="contactForm" action="" >
+               
+                 <div class="group card-name">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="" type="text" maxlength="20" placeholder="Name Surname">
+                </div>
+               
+                <div class="group card-name">
+                    <label for="name">Email</label>
+                    <input type="text" id="email" class="" type="text" maxlength="50" placeholder="Email">
+                </div>
+                 <div class="group card-name">
+                    <label for="name">Phone</label>
+                    <input type="text" id="phone" class="" type="text" maxlength="50" placeholder="Phone">
+                </div>
+                <div class="group card-expiry">
+                    <div class="input-item expiry">
+                        <label for="expiry">Confirmation</label>
+                      
+                       <input type="text" id="confirmation" class="" type="text" maxlength="20" placeholder="Confirmation">
+                    </div>
+                   
+                </div>
+                  <!--p class="full">
+                            <button  type="submit">SUBMIT</button>
+                        </p-->
+                <p class="grup submit-group submit">
+                    <span class="arrow"></span>
+
+                    <input type="submit" class="submit" value="Continue to payment">
+                </p>
+            </form>
+        </article>
+        <div class="part bg"></div>
+    </div>
+</div>
+        <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+        <script>
+            
+        
+        
+        
+        
+        
+
+           var iteminfo = $(this.dataset)[0];
+        
+        var shopcart = [];
+        $(document).ready(function () {
+            outputCart();
+            $('#output').on('change', '.dynqua', function () {
+                var iteminfo = $(this.dataset)[0];
+                var itemincart = false;
+                var removeItem = false;
+                var removeIndex = 0;
+                var shoesize =  $(this).val();
+                var qty = $(this).val();
+                if (qty <= 0) {
+                    qty = 0;
+                    $(this).val(0);
+                }
+                $.each(shopcart, function (index, value) {
+                    if (value.id == iteminfo.id) {
+                        if (qty <= 0) {
+                            removeItem = true;
+                            removeIndex = index;
+                        }
+                        else {
+                            shopcart[index].qty = qty;
+                            itemincart = true;
+                        }
+                    }
+                })
+                if (removeItem) {
+                    shopcart.splice(removeIndex, 1);
+                }
+                sessionStorage["sca"] = JSON.stringify(shopcart);
+                outputCart();
+            })
+
+            function outputCart() {
+                if (sessionStorage["sca"] != null) {
+                    shopcart = JSON.parse(sessionStorage["sca"].toString());
+                }
+                console.log(sessionStorage["sca"]);
+                console.log(shopcart);
+                var holderHTML = '';
+                var total = 0;
+                var itemCnt = 0;
+                var size = 5;
+                $.each(shopcart, function (index, value) {
+                    var stotal = value.qty * value.price;
+                    var a = (index + 1);
+                    
+                    total += stotal;
+                    itemCnt += parseInt(value.qty);
+                    size =  parseInt(value.shoesize);
+                 /*data-id="' + value.id + '"></td><td><input type="hidden" name="item_name_' + a + '" value="' + value.name + ' ' + value.s + '">' + value.name + '(' + value.s + ')</td><td><input type="hidden" name="amount_' + a + '" value="' + formatMoney(value.price) + '"> $' + formatMoney(value.price) + ' </td><td class="text-xs-right"> ' + formatMoney(stotal) + '</td><td><span class="remove-item btn btn-danger">x</span></td></tr>';*/
+                    
+                    
+                    holderHTML += '<tr><td><input size="5"  type="number" class="dynqua" name="quantity_' + a + '" value="' + value.qty + '" data-id="' + value.id + '"></td><td><input type="hidden" name="item_name_' + a + '" value="' + value.name + ' ' + value.s + '">' + value.name + '(' + value.s + ')</td><td><input type="hidden" name="amount_' + a + '" value="' + formatMoney(value.price) + '"> $' + formatMoney(value.price) + ' </td><td class="text-xs-right"> ' + formatMoney(stotal) + '</td><td><span class="remove-item btn btn-danger">x</span></td><td><input size="5"  type="number" id="size" class="size" name="size_' + a + '" value="' + value.shoesize + '"></td></tr>'; 
+                })
+                holderHTML += '<tr><td colspan="3" class="text-xs-right">Total</td><td class="text-xs-right">$' + formatMoney(total) + '</td></tr>';
+                $('#output').html(holderHTML);
+            }
+            $('#output').on('click', '.remove-item', function () {
+                var itemInfo = $(this.dataset)[0];
+                var itemToDelete = $('.remove-item').index(this);
+                shopcart.splice(itemToDelete, 1);
+                sessionStorage["sca"] = JSON.stringify(shopcart);
+                outputCart();
+            })
+
+            function formatMoney(n) {
+                return (n / 100).toFixed(2);
+            }
+            
+            // Initialize Firebase
+              var config = {
+                apiKey: "AIzaSyDf1ubAgfks1c7JVU1Ki8Ze1HsjSCt_xD4",
+                authDomain: "online-shopping-site.firebaseapp.com",
+                databaseURL: "https://online-shopping-site.firebaseio.com",
+                projectId: "online-shopping-site",
+                storageBucket: "online-shopping-site.appspot.com",
+                messagingSenderId: "651894769620"
+              };
+              firebase.initializeApp(config);
+
+            //reference messages collection
+
+            var messageRef = firebase.database().ref('Purchase 2018/April');
+
+
+            //listen for form submit
+            document.getElementById('contactForm').addEventListener('submit', submitForm);
+
+            //submit form
+            function submitForm(e){
+                e.preventDefault();
+                     var holderHTML = '';
+                var total = 0;
+                var itemCnt = 0;
+                var size = 0;
+                $.each(shopcart, function (index, value) {
+                    var stotal = value.qty * value.price;
+                    var a = (index + 1);
+                    total += stotal;
+                    itemCnt += parseInt(value.qty);
+                      holderHTML += 'Qauntity   ' + value.qty + '  ' + value.name + '  (' + value.s + ')  ' + formatMoney(value.price) + ' subtotal $' + formatMoney(stotal)  ;
+                })
+                //get values
+                
+                var purchase = holderHTML;
+              
+
+                 var name = getInputVal('name');
+                     var comfirmation = getInputVal('confirmation');
+                     var email = getInputVal('email');
+                     var phone = getInputVal('phone');
+
+
+
+                    //save message
+                    saveMessage(name,email, phone, comfirmation,purchase);
+                    //show alert
+                    document.querySelector('.alert').style.display = 'block';
+
+                    //hide alert after 3 seconds
+                    setTimeout(function(){
+                        document.querySelector('.alert').style.display = 'none';
+                    },3000);
+
+                   ///clear form
+                    document.getElementById('contactForm').reset();
+
+                }
+
+                //function to get form values
+
+                function getInputVal(id){
+                    return document.getElementById(id).value;
+                }
+
+
+                //save message to firebase
+
+                function saveMessage(name,  email , phone , comfirmation,purchase){
+
+                    var newMessageRef = messageRef.push();
+                    newMessageRef.set({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                       comfirmation: comfirmation,
+                        purchase:purchase
+                    });
+
+                }
+
+
+
+        })
+        
+        
+        </script>
+    </body>
+    
+    
+</html>

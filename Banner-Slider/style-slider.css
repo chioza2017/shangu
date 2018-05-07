@@ -1,0 +1,26 @@
+
+#slider{
+
+}
+
+
+#slider .item{
+    height: 450px;
+    
+}
+#slide1{
+    background: url(adida.jpg) center no-repeat;
+        background-size: cover;
+     position: center;
+}
+#slide2{
+    background: url(nike-banner%20presto.jpg) center no-repeat;
+        background-size: cover;
+         position: center;
+
+}
+#slide3{
+    background: url(test_banner1_2048x2048.jpg) center no-repeat;
+    background-size: cover;
+    position: center;
+}
